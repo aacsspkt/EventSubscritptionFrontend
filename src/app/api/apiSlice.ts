@@ -14,8 +14,8 @@ const baseQuery = fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_URL,
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
-        const token = (getState() as any).auth.access
-
+        const auth = (getState() as any).auth;
+        const token = auth.access;
         if (token) {
             headers.set("authorization", `Bearer ${token}`)
         }
@@ -25,18 +25,17 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: {}) => {
     let result = await baseQuery(args, api, extraOptions);
-    console.log(result);
 
     if (result?.error?.status === 403) {
         console.log("sending refresh token");
 
-        const refreshResult = await baseQuery("/api/auth/token/refresh/", api, extraOptions);
+        const refreshResult = await baseQuery("/api/auth/refresh/", api, extraOptions);
         console.log(refreshResult);
 
         if (refreshResult?.data) {
-            const user = (api.getState() as any).auth.user
-
-            api.dispatch(setCredentials({...refreshResult.data, user}))
+            // const user = (api.getState() as any).auth
+            console.log("refresh data", refreshResult.data);
+            api.dispatch(setCredentials({...refreshResult.data}))
 
             result = await baseQuery(args, api, extraOptions);
         } else {

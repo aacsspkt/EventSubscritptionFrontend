@@ -3,7 +3,15 @@ import {
   useDispatch,
   useSelector,
 } from 'react-redux';
-import { persistStore } from 'redux-persist';
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from 'redux-persist';
 
 import { configureStore } from '@reduxjs/toolkit';
 
@@ -19,7 +27,11 @@ export const store = configureStore({
     stream: streamReducer,
     profile: profileReducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),
+  middleware: getDefaultMiddleware => getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }).concat(apiSlice.middleware),
   devTools: true
 });
 export type RootState = ReturnType<typeof store.getState>;

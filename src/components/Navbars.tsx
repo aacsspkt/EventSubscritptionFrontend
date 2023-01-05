@@ -130,7 +130,7 @@ export const Navbar : React.FC<NavbarProps> = ({navigation}) => {
 											</Menu.Item> */}
 											<Menu.Item>
 												{({ active }) => (
-													<button type='button' onClick={handleSignOut} className={classNames(active ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}>
+													<button type='button' onClick={handleSignOut} className={classNames(active ? "bg-gray-100" : "", "w-full text-start block px-4 py-2 text-sm text-gray-700")}>
 														Sign out
 													</button>
 												)}

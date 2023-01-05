@@ -1,42 +1,51 @@
 import {
   createSlice,
+  PayloadAction,
   SliceCaseReducers,
 } from '@reduxjs/toolkit';
 
 import { RootState } from '../../app/store';
+import { VideoStreamSchema } from './streamApiSlice';
 
-interface StreamState {
+export interface Stream {
+	id: string;
 	title: string;
 	description: string | undefined;
 	streamKey: string;
-	venue: string;
-	created: Date | null;
+	startTime: number;
+	thumbnail: string;
+	// venue: string;
+	created: number;
 }
+interface StreamState {
+	streams: Stream[];
+}
+
 const initialState: StreamState = {
-	title: "",
-	description: undefined,
-	streamKey: "",
-	venue: "",
-	created: null,
+	streams: [],
 };
+
 const streamSlice = createSlice<StreamState, SliceCaseReducers<StreamState>, "stream">({
 	name: "stream",
 	initialState,
 	reducers: {
-		setStream: (state, action) => {
-			const { title, description, streamKey, venue, created } = action.payload;
-            const date = new Date(created)
-            console.log("Date in store:", date)
-			state.title =  title;
-            state.description =  description;
-            state.streamKey= streamKey;
-            state.venue= venue;
-            state.created= date;
-		}
+		setStreams: (state, action: PayloadAction<VideoStreamSchema[]>) => {
+			state.streams = action.payload.map(({ id, title, description, start_time, created, stream_key, thumbnail }) => {
+				return {
+					id,
+					title,
+					description,
+					startTime: Date.parse(start_time),
+					created: Date.parse(created),
+					streamKey: stream_key,
+					thumbnail: thumbnail ? thumbnail : "https://dummyimage.com/720x600/ababab/ffffff&text=Stream",
+				};
+			});
+		},
 	},
 });
 
-export const { setStream } = streamSlice.actions;
+export const { setStreams } = streamSlice.actions;
 
 export default streamSlice.reducer;
 

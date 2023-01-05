@@ -1,6 +1,6 @@
 import { apiSlice } from '../../app/api/apiSlice';
 
-interface Profile {
+export interface Profile {
     id: string;
     email: string;
     name: string;
@@ -8,13 +8,24 @@ interface Profile {
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
-        getUser: builder.query<Profile[], { email: string }>({
-            query: ({email}) => ({
-                url: `/api/users/?search=${email.replace("@", "%40")}`,
+        getProfileById: builder.query<Profile, { id: string }>({
+            query: ({id}) => ({
+                url: `/api/users/${id}/`,
                 method: "GET",
+                redirect: "follow"
             })
+        }),
+        updateProfile: builder.mutation<Profile, {id: string; email: string, name: string, password: string}>({
+            query: (payload) => ({
+                url: `api/users/${payload.id}/update/`,
+                method: "PUT",
+                body: payload,
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            }),
         })
     })
 })
 
-export const { useGetUserQuery } = userApiSlice;
+export const { useGetProfileByIdQuery, useUpdateProfileMutation } = userApiSlice;

@@ -1,29 +1,51 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { useAppDispatch } from '../app/store';
 import VideoCard from '../components/VideoCard';
+import { useGetAllStreamsQuery } from '../features/streams/streamApiSlice';
 import {
-  selectCurrentToken,
-  selectCurrentUser,
-} from '../features/auth/authSlice';
+  selectStream,
+  setStreams,
+} from '../features/streams/streamSlice';
 
 export default function Home() {
-	const user = useSelector(selectCurrentUser);
-	const token = useSelector(selectCurrentToken);
+	const {streams} = useSelector(selectStream);
+
+	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
+	const {data, error} = useGetAllStreamsQuery({});
+
+	useEffect(()=> {
+		let cancel = false;
+
+		if(!cancel && data) {
+			dispatch(setStreams(data)) 
+		}
+
+		return () => {
+			cancel = true;
+		}
+	}, [dispatch, data])
+
+	if(error) {
+		console.error(error);
+	}
 
 	return (
 		<section className="text-gray-600 body-font">
 			<div className="max-w-7xl px-5 py-14 mx-auto">
-				<div className='my-2'>
-					<p>{user ? `Welcome ${user}!` : "Welcome!"}</p>
-				</div>
 				<div className="flex flex-wrap -m-4">
-					{[1, 2, 3].map((_, i) => {
+					{streams.map((stream, i) => {
 						return (
 							<VideoCard
+								onClick={()=> {navigate(`stream/${stream.id}`)}}
 								key={i}
-								title="Swiming"
-								imageUrl="https://dummyimage.com/720x600/ababab/ffffff&text=Stream"
-								description="Photo booth fam kinfolk cold-pressed sriracha leggings jianbing microdosing tousled waistcoat."
+								title={stream.title}
+								imageUrl={stream.thumbnail}
+								description={stream.description}
 							/>
 						);
 					})}
