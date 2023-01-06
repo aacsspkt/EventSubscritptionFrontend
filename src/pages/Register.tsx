@@ -170,7 +170,7 @@ const Register: React.FC = ({}) => {
 							alt="Your Company"
 						/>
 						<h1 className="mt-6 text-center text-4xl font-bold">Fun Olympic</h1>
-						<h2 className="mt-6 text-center text-xl tracking-tight text-gray-900">Sign in to your account</h2>
+						<h2 className="mt-6 text-center text-xl tracking-tight text-gray-900">Sign Up an account</h2>
 					</div>
 					<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
 						<input type="hidden" name="remember" defaultValue="true" />
